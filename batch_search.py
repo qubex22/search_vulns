@@ -5,7 +5,7 @@ import sys
 
 # Input and output file paths
 INPUT_FILE = sys.argv[1]  # Modify this to your input file
-OUTPUT_FILE = "vulnerabilities.csv"
+OUTPUT_FILE = "data/vulnerabilities.csv"
 
 def read_input_file(file_path):
     """Reads vendor, product, and version information from a file."""
