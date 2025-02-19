@@ -3,6 +3,8 @@ FROM ubuntu:latest
 USER root
 RUN mkdir /home/search_vulns&&chown ubuntu /home/search_vulns
 
+RUN mkdir /home/search_vulns/data&&chown ubuntu /home/search_vulns/data
+
 USER ubuntu
 
 WORKDIR /home/search_vulns
