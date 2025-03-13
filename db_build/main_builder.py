@@ -829,7 +829,9 @@ def add_ghsa_data_to_db():
                 single_version_affected = False
                 affected_ranges = []
                 advisory_affected_pnames.add(pname)
-
+                # Initialize introduced and fixed to None or empty
+                introduced, fixed = None, None
+                is_version_end_incl = False
                 # extract affected version ranges
                 for pkg_range in pkg.get('ranges', []):  # usually just one entry
                     introduced, fixed, is_version_end_incl = '', '', False
@@ -852,7 +854,7 @@ def add_ghsa_data_to_db():
 
                     affected_ranges.append((pname, ecosystem, introduced, fixed, is_version_end_incl))
                 for version in pkg.get('versions', []):  # usually just one entry or omitted
-                    if version == introduced:  # just a single version is affected
+                    if introduced is not None and version == introduced:  # just a single version is affected
                         single_version_affected = True
                     ghsa_affects_map[ghsa_id].append((pname, ecosystem, version))
                 if not single_version_affected:  # only add range(s) if more than one version is affected
