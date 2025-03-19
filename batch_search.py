@@ -8,7 +8,7 @@ import re
 f_name = sys.argv[1]
 INPUT_FILE = f"/home/data/{f_name}"
 OUTPUT_FILE = f"/home/data/vulnerabilities_{f_name}.csv"
-WARNING_FILE = "/home/data/warnings_{f_name}.log"
+WARNING_FILE = f"/home/data/warnings_{f_name}.log"
 
 def read_input_file(file_path):
     """Reads vendor, product, and version information from a file."""
