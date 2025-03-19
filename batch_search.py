@@ -5,9 +5,10 @@ import sys
 import re
 
 # Input and output file paths
-INPUT_FILE = f"/home/data/{sys.argv[1]}"
-OUTPUT_FILE = "/home/data/vulnerabilities.csv"
-WARNING_FILE = "/home/data/warnings.log"
+f_name = sys.argv[1]
+INPUT_FILE = f"/home/data/{f_name}"
+OUTPUT_FILE = f"/home/data/vulnerabilities_{f_name}.csv"
+WARNING_FILE = "/home/data/warnings_{f_name}.log"
 
 def read_input_file(file_path):
     """Reads vendor, product, and version information from a file."""
@@ -53,26 +54,33 @@ def parse_json_data(json_data):
             continue  # Skip this entry
 
         # Extract version from CPE if available
+        searched_cpes = details.get("cpe", "")
+        vendor = details.get("cpe", "").split(":")[3] if "cpe" in details else "N/A"
+        product = version = details.get("cpe", "").split(":")[4] if "cpe" in details else "N/A"
         version = details.get("cpe", "").split(":")[5] if "cpe" in details else "N/A"
         vulns = details.get("vulns", {})
 
         for cve_id, vuln_details in vulns.items():
             extracted_data.append({
-                "name": software,
+                "query": software,
+                "vendor": vendor,
+                "product": product,
                 "version": version,
                 "cve_id": cve_id,
+                "vuln_match_reason": vuln_details.get("vuln_match_reason", "N/A"),
                 "aliases": ", ".join(vuln_details.get("aliases", [])),
                 "severity": vuln_details.get("cvss", "N/A"),
                 "known_exploited": vuln_details.get("cisa_known_exploited", False),
                 "published": vuln_details.get("published", "N/A"),
-                "href": vuln_details.get("href", "N/A")
+                "href": vuln_details.get("href", "N/A"),
+                "searched_cpes": searched_cpes
             })
 
     return extracted_data, warnings
 
 def write_csv(data, output_file):
     """Writes extracted data to a CSV file."""
-    fieldnames = ["name", "version", "cve_id", "aliases", "severity", "known_exploited", "published", "href"]
+    fieldnames = ["query", "vendor", "product", "version", "cve_id", "vuln_match_reason", "aliases", "severity", "known_exploited", "published", "href","searched_cpes"]
 
     try:
         with open(output_file, mode="w", newline="") as file:
